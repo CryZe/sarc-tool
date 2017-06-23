@@ -22,4 +22,13 @@ pub struct SarcFile {
     pub data: Vec<u8>,
 }
 
+#[derive(Debug)]
+struct Node {
+    hash: u32,
+    is_file_name_stored: bool,
+    file_name_table_entry: u32,
+    beginning_of_node_file_data: u32,
+    end_of_node_file_data: u32,
+}
+
 pub use self::parse::{parse, Error as ParseError, Result as ParseResult};

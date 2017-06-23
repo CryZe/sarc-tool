@@ -2,7 +2,7 @@ use std::io::{self, Read, Seek, SeekFrom};
 use std::{mem, result};
 use byteorder::{ReadBytesExt, BigEndian as BE, LittleEndian as LE, ByteOrder};
 use super::consts::*;
-use super::{SarcFile, Sarc};
+use super::{SarcFile, Sarc, Node};
 
 pub type Result<T> = result::Result<T, Error>;
 pub type ParseNodeResult<T> = result::Result<T, ParseNodeError>;
@@ -166,15 +166,6 @@ where
     let _unknown = reader.read_u16::<B>()?;
 
     Ok(())
-}
-
-#[derive(Debug)]
-struct Node {
-    hash: u32,
-    is_file_name_stored: bool,
-    file_name_table_entry: u32,
-    beginning_of_node_file_data: u32,
-    end_of_node_file_data: u32,
 }
 
 fn parse_node<B, R>(mut reader: R) -> ParseNodeResult<Node>
