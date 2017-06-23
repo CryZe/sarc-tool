@@ -1,9 +1,11 @@
 [package]
 name = "sarc-tool"
-version = "0.1.0"
+version = "0.2.0"
 authors = ["Christopher Serr <christopher.serr@gmail.com>"]
 
 [dependencies]
 byteorder = "1.0.0"
 quick-error = "1.2.0"
 clap = "2.25.0"
+walkdir = "1.0.7"
+itertools = "0.6.0"

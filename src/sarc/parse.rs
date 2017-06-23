@@ -2,7 +2,7 @@ use std::io::{self, Read, Seek, SeekFrom};
 use std::{mem, result};
 use byteorder::{ReadBytesExt, BigEndian as BE, LittleEndian as LE, ByteOrder};
 use super::consts::*;
-use super::{SarcFile, Sarc, Node};
+use super::{SarcFile, Sarc, Node, name_table_data_offset};
 
 pub type Result<T> = result::Result<T, Error>;
 pub type ParseNodeResult<T> = result::Result<T, ParseNodeError>;
@@ -72,12 +72,20 @@ where
     let nodes = parse_file_table::<B, _>(&mut reader)?;
     parse_file_name_table::<B, _>(&mut reader)?;
 
+    let name_table_data_offset = name_table_data_offset(nodes.len());
+
     let mut buf = Vec::new();
 
     let files = nodes
         .into_iter()
         .map(|node| {
-            parse_file::<B, _>(&mut reader, &mut buf, beginning_of_data_offset, node)
+            parse_file::<B, _>(
+                &mut reader,
+                &mut buf,
+                name_table_data_offset,
+                beginning_of_data_offset,
+                node,
+            )
         })
         .collect::<Result<_>>()?;
 
@@ -87,6 +95,7 @@ where
 fn parse_file<B, R>(
     mut reader: R,
     buf: &mut Vec<u8>,
+    name_table_data_offset: u32,
     data_offset: u32,
     node: Node,
 ) -> Result<SarcFile>
@@ -94,10 +103,10 @@ where
     B: ByteOrder,
     R: Read + Seek,
 {
-    let path = if node.is_file_name_stored {
+    let name = if node.is_file_name_stored {
         reader.seek(SeekFrom::Start(
             node.file_name_table_entry as u64 * 4 +
-                SFNT_TABLE_OFFSET,
+                name_table_data_offset as u64,
         ))?;
 
         buf.clear();
@@ -128,7 +137,7 @@ where
     ))?;
     reader.read_exact(&mut data)?;
 
-    Ok(SarcFile { path, data })
+    Ok(SarcFile { name, data })
 }
 
 fn parse_file_table<B, R>(mut reader: R) -> Result<Vec<Node>>

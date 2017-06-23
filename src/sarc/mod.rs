@@ -1,3 +1,4 @@
+mod encode;
 mod parse;
 
 mod consts {
@@ -9,7 +10,9 @@ mod consts {
     pub const SFNT_HEADER_LENGTH: u16 = 0x8;
     pub const BOM_BE: [u8; 2] = [0xFE, 0xFF];
     pub const BOM_LE: [u8; 2] = [0xFF, 0xFE];
-    pub const SFNT_TABLE_OFFSET: u64 = 0xc8;
+    pub const SFAT_DATA_OFFSET: u32 = SARC_HEADER_LENGTH as u32 + SFAT_HEADER_LENGTH as u32;
+    pub const NODE_SIZE: u32 = 0x10;
+    pub const HASH_MULTIPLIER: u32 = 0x00000065;
 }
 
 pub struct Sarc {
@@ -18,7 +21,7 @@ pub struct Sarc {
 
 #[derive(Debug)]
 pub struct SarcFile {
-    pub path: String,
+    pub name: String,
     pub data: Vec<u8>,
 }
 
@@ -31,4 +34,13 @@ struct Node {
     end_of_node_file_data: u32,
 }
 
+fn name_table_header_offset(node_count: usize) -> u32 {
+    node_count as u32 * consts::NODE_SIZE + consts::SFAT_DATA_OFFSET
+}
+
+fn name_table_data_offset(node_count: usize) -> u32 {
+    name_table_header_offset(node_count) + consts::SFNT_HEADER_LENGTH as u32
+}
+
 pub use self::parse::{parse, Error as ParseError, Result as ParseResult};
+pub use self::encode::{encode, Error as EncodeError, Result as EncodeResult};
