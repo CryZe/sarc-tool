@@ -1,0 +1,8 @@
+[package]
+name = "sarc-tool"
+version = "0.1.0"
+authors = ["Christopher Serr <christopher.serr@gmail.com>"]
+
+[dependencies]
+byteorder = "*"
+quick-error = "1.2.0"
