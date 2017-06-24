@@ -49,6 +49,7 @@
 
                     document.body.removeChild(element);
                     Zip_drop(ptr);
+                    Module._free(buf);
                 }
                 reader.readAsArrayBuffer(file);
             }
