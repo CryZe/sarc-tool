@@ -3,9 +3,16 @@ name = "sarc-tool"
 version = "0.2.0"
 authors = ["Christopher Serr <christopher.serr@gmail.com>"]
 
+[profile.release]
+lto = true
+panic = "abort"
+
+[workspace]
+members = ["nintendo-sarc", "js"]
+
 [dependencies]
-byteorder = "1.0.0"
-quick-error = "1.2.0"
 clap = "2.25.0"
 walkdir = "1.0.7"
 itertools = "0.6.0"
+zip = "0.2.3"
+nintendo-sarc = { path = "nintendo-sarc" }

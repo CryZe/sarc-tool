@@ -1,0 +1,8 @@
+[package]
+name = "js"
+version = "0.1.0"
+authors = ["Christopher Serr <christopher.serr@gmail.com>"]
+
+[dependencies]
+nintendo-sarc = { path = "../nintendo-sarc" }
+zip = "0.2.3"

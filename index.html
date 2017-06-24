@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>SARC Tool</title>
+</head>
+
+<body>
+    <script src="./sarc.js"></script>
+    <button id="convert">Convert</button>
+    <script type="text/javascript">
+        var Zip_data = Module.cwrap('Zip_data', 'number', ['number']);
+        var Zip_len = Module.cwrap('Zip_len', 'number', ['number']);
+        var Zip_drop = Module.cwrap('Zip_drop', null, ['number']);
+        var Sarc_to_zip = Module.cwrap('Sarc_to_zip', 'number', ['number', 'number']);
+
+        document.getElementById('convert').onclick = function () {
+            var input = document.createElement('input');
+            input.setAttribute("type", "file");
+            input.onchange = function (e) {
+                var file = e.target.files[0];
+                if (!file) {
+                    return;
+                }
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    var contents = e.target.result;
+                    var data = new Int8Array(contents);
+                    var buf = Module._malloc(data.length);
+                    Module.writeArrayToMemory(data, buf);
+                    var ptr = Sarc_to_zip(buf, data.length);
+                    if (ptr == 0) {
+                        alert("Couldn't parse");
+                        return;
+                    }
+                    var zip_len = Zip_len(ptr);
+                    var zip_ptr = Zip_data(ptr);
+
+                    var element = document.createElement('a');
+                    var byteArray = new Uint8Array(Module.HEAPU8.buffer, zip_ptr, zip_len);
+                    element.setAttribute('href', window.URL.createObjectURL(new Blob([byteArray], { type: 'application/zip' })));
+                    element.setAttribute('download', "archive.zip");
+
+                    element.style.display = 'none';
+                    document.body.appendChild(element);
+
+                    element.click();
+
+                    document.body.removeChild(element);
+                    Zip_drop(ptr);
+                }
+                reader.readAsArrayBuffer(file);
+            }
+            input.click();
+        }
+    </script>
+</body>
+
+</html>

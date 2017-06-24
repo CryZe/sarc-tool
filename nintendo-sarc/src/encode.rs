@@ -1,8 +1,8 @@
 use std::io::{self, Write};
 use std::result;
 use byteorder::{WriteBytesExt, BigEndian as BE};
-use super::{Sarc, name_table_data_offset};
-use super::consts::*;
+use {Sarc, name_table_data_offset};
+use consts::*;
 
 pub type Result<T> = result::Result<T, Error>;
 

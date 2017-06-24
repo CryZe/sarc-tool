@@ -1,8 +1,8 @@
 use std::io::{self, Read, Seek, SeekFrom};
 use std::{mem, result};
 use byteorder::{ReadBytesExt, BigEndian as BE, LittleEndian as LE, ByteOrder};
-use super::consts::*;
-use super::{SarcFile, Sarc, Node, name_table_data_offset};
+use consts::*;
+use {SarcFile, Sarc, Node, name_table_data_offset};
 
 pub type Result<T> = result::Result<T, Error>;
 pub type ParseNodeResult<T> = result::Result<T, ParseNodeError>;
